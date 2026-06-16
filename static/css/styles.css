@@ -32,6 +32,137 @@
     --radius-sm: 6px;
 }
 
+/* LIGHT THEME VARIABLES OVERRIDES */
+body.light-theme {
+    --bg-dark: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f1f5f9;
+    --border-color: #cbd5e1;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --primary-glow: rgba(99, 102, 241, 0.08);
+}
+
+body.light-theme .bg-glow {
+    opacity: 0.15;
+}
+
+body.light-theme .update-preview-card {
+    background: rgba(15, 23, 42, 0.02);
+}
+
+body.light-theme .modal-card {
+    background: #ffffff;
+    color: var(--text-primary);
+}
+
+body.light-theme .modal-header h2 {
+    color: var(--text-primary);
+}
+
+body.light-theme .modal-footer {
+    background-color: #f1f5f9;
+}
+
+body.light-theme .textarea-wrapper {
+    background-color: #f8fafc;
+}
+
+body.light-theme .textarea-wrapper textarea {
+    color: var(--text-primary);
+}
+
+body.light-theme .template-option {
+    background: #f8fafc;
+}
+
+body.light-theme .template-option.active {
+    background: var(--primary-glow);
+}
+
+body.light-theme .x-logo {
+    background: #000000;
+}
+
+body.light-theme .logo-wrapper .database-icon {
+    color: #ffffff;
+}
+
+body.light-theme .logo-wrapper .bolt-icon {
+    color: #eab308;
+}
+
+/* THEME TOGGLE SWITCH */
+.theme-toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    padding: 6px 12px;
+    border-radius: 30px;
+    transition: var(--transition-smooth);
+}
+
+.theme-icon {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+body.light-theme .theme-icon.fa-sun {
+    color: #eab308;
+}
+
+body:not(.light-theme) .theme-icon.fa-moon {
+    color: #a855f7;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border-color);
+    transition: .4s;
+    border-radius: 20px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primary);
+}
+
+input:checked + .slider:before {
+    transform: translateX(16px);
+}
+
 /* RESET & BASE */
 * {
     box-sizing: border-box;
@@ -486,6 +617,13 @@ body {
     background-color: #000;
     border-color: #444;
 }
+
+.action-icon-btn.btn-copy-action.copied {
+    background-color: var(--color-feature) !important;
+    border-color: var(--color-feature) !important;
+    color: #fff !important;
+}
+
 
 /* CARD CONTENT */
 .update-card-content {

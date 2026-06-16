@@ -34,6 +34,23 @@
             </div>
             
             <div class="header-actions">
+                <!-- Theme Toggle -->
+                <div class="theme-toggle-container">
+                    <i class="fa-solid fa-moon theme-icon"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle-checkbox">
+                        <span class="slider"></span>
+                    </label>
+                    <i class="fa-solid fa-sun theme-icon"></i>
+                </div>
+
+                <!-- Export to CSV -->
+                <button id="export-csv-btn" class="btn btn-secondary" title="Export current release list to CSV">
+                    <i class="fa-solid fa-file-csv"></i>
+                    <span>Export CSV</span>
+                </button>
+
+                <!-- Refresh -->
                 <button id="refresh-btn" class="btn btn-primary" title="Refresh Release Notes">
                     <i class="fa-solid fa-rotate-right" id="refresh-icon"></i>
                     <span>Refresh</span>

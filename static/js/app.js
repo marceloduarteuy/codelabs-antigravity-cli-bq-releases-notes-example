@@ -23,6 +23,8 @@ const elements = {
     noResultsState: document.getElementById('no-results-state'),
     retryBtn: document.getElementById('retry-btn'),
     resetFiltersBtn: document.getElementById('reset-filters-btn'),
+    themeToggleCheckbox: document.getElementById('theme-toggle-checkbox'),
+    exportCsvBtn: document.getElementById('export-csv-btn'),
     
     // Stats
     statTotalReleases: document.getElementById('stat-total-releases'),
@@ -44,6 +46,7 @@ const elements = {
 
 // INIT APP
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     fetchReleases();
     setupEventListeners();
 });
@@ -138,6 +141,16 @@ function setupEventListeners() {
             generateTweetDraft();
         });
     });
+    
+    // Theme toggle
+    if (elements.themeToggleCheckbox) {
+        elements.themeToggleCheckbox.addEventListener('change', toggleTheme);
+    }
+    
+    // Export CSV
+    if (elements.exportCsvBtn) {
+        elements.exportCsvBtn.addEventListener('click', exportToCSV);
+    }
 }
 
 // FILTER & SEARCH LOGIC
@@ -240,6 +253,9 @@ function renderReleases() {
             header.innerHTML = `
                 <span class="badge badge-${lowerType}">${update.type}</span>
                 <div class="card-actions">
+                    <button class="action-icon-btn btn-copy-action" title="Copy text to clipboard">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
                     <button class="action-icon-btn btn-tweet-action" title="Tweet about this update">
                         <i class="fa-brands fa-x-twitter"></i>
                     </button>
@@ -258,6 +274,26 @@ function renderReleases() {
             card.appendChild(body);
             listContainer.appendChild(card);
             
+            // Attach Copy Button Click Event
+            header.querySelector('.btn-copy-action').addEventListener('click', async (e) => {
+                const btn = e.currentTarget;
+                const icon = btn.querySelector('i');
+                try {
+                    await navigator.clipboard.writeText(update.text);
+                    btn.classList.add('copied');
+                    icon.className = 'fa-solid fa-check';
+                    btn.setAttribute('title', 'Copied!');
+                    
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        icon.className = 'fa-regular fa-copy';
+                        btn.setAttribute('title', 'Copy text to clipboard');
+                    }, 1500);
+                } catch (err) {
+                    console.error('Failed to copy: ', err);
+                }
+            });
+
             // Attach Tweet Button Click Event
             header.querySelector('.btn-tweet-action').addEventListener('click', (e) => {
                 e.preventDefault();
@@ -396,3 +432,57 @@ function shareOnTwitter() {
     window.open(url, '_blank', 'width=550,height=420');
     closeModal();
 }
+
+// THEME UTILITIES
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    const isLight = savedTheme === 'light';
+    document.body.classList.toggle('light-theme', isLight);
+    if (elements.themeToggleCheckbox) {
+        elements.themeToggleCheckbox.checked = isLight;
+    }
+}
+
+function toggleTheme(e) {
+    const isLight = e.target.checked;
+    document.body.classList.toggle('light-theme', isLight);
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+}
+
+// EXPORT TO CSV (Robust Blob method)
+function exportToCSV() {
+    if (!appState.filteredReleases || appState.filteredReleases.length === 0) {
+        alert("No updates available to export.");
+        return;
+    }
+    
+    // CSV Header
+    const rows = [["Release Date", "Update Type", "Plain Text Description", "Link"]];
+    
+    // Populate Rows
+    appState.filteredReleases.forEach(release => {
+        release.updates.forEach(update => {
+            rows.push([
+                release.date,
+                update.type,
+                update.text,
+                update.link
+            ]);
+        });
+    });
+    
+    // Format rows as CSV string
+    const csvContent = rows.map(e => e.map(val => `"${String(val).replace(/"/g, '""')}"`).join(",")).join("\n");
+    
+    // Create Blob and Download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `bigquery_release_notes_${new Date().toISOString().slice(0,10)}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
